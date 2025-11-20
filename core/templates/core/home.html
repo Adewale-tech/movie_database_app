@@ -1,0 +1,45 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Home - MovieDB{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <!-- Hero Section (First movie in list) -->
+    {% if movies %}
+    <div class="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl group">
+        {% with featured=movies.0 %}
+        <img src="https://image.tmdb.org/t/p/original{{ featured.backdrop_path }}" alt="{{ featured.title }}"
+            class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-900/70 to-transparent flex items-center">
+            <div class="max-w-2xl px-8 md:px-12 space-y-4">
+                <h1 class="text-4xl md:text-6xl font-bold text-white leading-tight">{{ featured.title }}</h1>
+                <p class="text-gray-300 text-lg line-clamp-3 max-w-xl">{{ featured.overview }}</p>
+                <div class="flex items-center gap-4 pt-4">
+                    <a href="{% url 'core:movie_detail' featured.id %}"
+                        class="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-full font-semibold transition-all transform hover:scale-105 flex items-center gap-2">
+                        <i data-lucide="play-circle" class="w-5 h-5"></i> View Details
+                    </a>
+                    <button
+                        class="bg-gray-700/50 hover:bg-gray-700 text-white px-6 py-3 rounded-full font-semibold backdrop-blur-sm transition-all flex items-center gap-2">
+                        <i data-lucide="plus" class="w-5 h-5"></i> Watchlist
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endwith %}
+    </div>
+    {% endif %}
+
+    <!-- Trending Section -->
+    <div>
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+            <i data-lucide="trending-up" class="text-purple-500"></i> Trending This Week
+        </h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            {% for movie in movies %}
+            {% include 'core/components/movie_card.html' with movie=movie %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

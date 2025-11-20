@@ -1,0 +1,49 @@
+{% extends 'core/base.html' %}
+
+{% block title %}My Watchlist - MovieDB{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <h1 class="text-3xl font-bold text-white">My Watchlist</h1>
+
+    {% if watchlist %}
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        {% for item in watchlist %}
+        <div
+            class="group relative bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <a href="{% url 'core:movie_detail' item.movie_id %}">
+                <div class="aspect-[2/3] overflow-hidden relative">
+                    {% if item.poster_path %}
+                    <img src="https://image.tmdb.org/t/p/w500{{ item.poster_path }}" alt="{{ item.title }}"
+                        class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
+                    {% else %}
+                    <div class="w-full h-full bg-gray-700 flex items-center justify-center">
+                        <span class="text-gray-500">No Image</span>
+                    </div>
+                    {% endif %}
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                        <p class="text-white font-bold text-lg truncate">{{ item.title }}</p>
+                        <form action="{% url 'core:remove_from_watchlist' item.movie_id %}" method="post" class="mt-2">
+                            {% csrf_token %}
+                            <button type="submit"
+                                class="text-red-400 hover:text-red-300 text-sm flex items-center gap-1">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i> Remove
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-20">
+        <i data-lucide="film" class="w-16 h-16 text-gray-600 mx-auto mb-4"></i>
+        <p class="text-xl text-gray-400">Your watchlist is empty.</p>
+        <a href="{% url 'core:home' %}" class="text-purple-400 hover:text-purple-300 mt-4 inline-block">Browse
+            Movies</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
