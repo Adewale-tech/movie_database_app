@@ -8,7 +8,15 @@ class HomeView(View):
     def get(self, request):
         tmdb = TMDBService()
         trending_movies = tmdb.get_trending_movies()
-        return render(request, 'core/home.html', {'movies': trending_movies})
+        
+        watchlist_movie_ids = []
+        if request.user.is_authenticated:
+            watchlist_movie_ids = list(Watchlist.objects.filter(user=request.user).values_list('movie_id', flat=True))
+            
+        return render(request, 'core/home.html', {
+            'movies': trending_movies,
+            'watchlist_movie_ids': watchlist_movie_ids
+        })
 
 class MovieDetailView(View):
     def get(self, request, movie_id):
@@ -56,3 +64,21 @@ class WatchlistView(LoginRequiredMixin, View):
     def get(self, request):
         watchlist = Watchlist.objects.filter(user=request.user)
         return render(request, 'core/watchlist.html', {'watchlist': watchlist})
+
+class FeedbackView(View):
+    def get(self, request):
+        return render(request, 'core/feedback.html')
+
+    def post(self, request):
+        # In a real app, we would save this or send an email
+        # For now, just redirect home with a success message (if messages were set up)
+        return redirect('core:home')
+
+class RateMovieView(LoginRequiredMixin, View):
+    def post(self, request, movie_id):
+        rating = request.POST.get('rating')
+        if rating:
+            # Save rating logic here (using Review model or similar)
+            # For this demo, we'll just assume it's saved
+            pass
+        return redirect('core:movie_detail', movie_id=movie_id)

@@ -33,7 +33,7 @@ class TMDBService:
         """Fetch movie details including credits and reviews."""
         url = f"{self.BASE_URL}/movie/{movie_id}"
         params = self._get_params()
-        params['append_to_response'] = 'credits,reviews'
+        params['append_to_response'] = 'credits,reviews,videos'
         response = requests.get(url, params=params)
         if response.status_code == 200:
             return response.json()
