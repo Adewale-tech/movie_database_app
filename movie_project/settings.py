@@ -86,6 +86,12 @@ DATABASES = {
     }
 }
 
+# Vercel specific database configuration
+if os.getenv('VERCEL'):
+    DATABASES['default']['NAME'] = os.path.join('/tmp', 'db.sqlite3')
+    # Note: This means the DB is wiped on every deployment/cold start.
+    # For persistent data, use Postgres (e.g., Neon, Supabase).
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
