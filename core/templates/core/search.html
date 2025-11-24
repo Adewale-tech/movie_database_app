@@ -9,7 +9,7 @@
     {% if movies %}
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
         {% for movie in movies %}
-        {% include 'core/components/movie_card.html' with movie=movie %}
+        {% include 'core/components/movie_card.html' %}
         {% endfor %}
     </div>
     {% else %}
