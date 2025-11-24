@@ -1,18 +1,46 @@
-}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
 
-::-webkit-scrollbar-track {
-background: #1a202c;
-}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Discover trending movies, watch trailers, and create your watchlist. The ultimate movie database experience.">
+    <meta name="theme-color" content="#111827">
+    <title>{% block title %}MovieDB - Discover & Watch{% endblock %}</title>
 
-::-webkit-scrollbar-thumb {
-background: #4a5568;
-border-radius: 4px;
-}
+    <!-- Favicon -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>">
 
-::-webkit-scrollbar-thumb:hover {
-background: #718096;
-}
-</style>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a202c;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4a5568;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #718096;
+        }
+    </style>
 </head>
 
 <body class="bg-gray-900 text-white font-sans antialiased min-h-screen flex flex-col">
