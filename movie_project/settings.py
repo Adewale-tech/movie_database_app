@@ -16,6 +16,9 @@ import os
 
 load_dotenv()
 
+print(f"DEBUG: DATABASE_URL is {'Set' if os.getenv('DATABASE_URL') else 'NOT SET'}")
+print(f"DEBUG: TMDB_API_KEY is {'Set' if os.getenv('TMDB_API_KEY') else 'NOT SET'}")
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
