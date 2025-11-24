@@ -79,6 +79,11 @@ WSGI_APPLICATION = 'movie_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+import dj_database_url
+
+# Database
+# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -88,9 +93,15 @@ DATABASES = {
 
 # Vercel specific database configuration
 if os.getenv('VERCEL'):
-    DATABASES['default']['NAME'] = os.path.join('/tmp', 'db.sqlite3')
-    # Note: This means the DB is wiped on every deployment/cold start.
-    # For persistent data, use Postgres (e.g., Neon, Supabase).
+    DATABASES['default'] = dj_database_url.config(
+        default='sqlite:///' + os.path.join('/tmp', 'db.sqlite3'),
+        conn_max_age=600
+    )
+elif os.getenv('DATABASE_URL'):
+    DATABASES['default'] = dj_database_url.config(
+        default=os.getenv('DATABASE_URL'),
+        conn_max_age=600
+    )
 
 
 # Password validation
