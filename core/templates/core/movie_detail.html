@@ -39,99 +39,125 @@
                         </button>
                     </form>
                     {% endif %}
-                    <div>
-                        <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">{{ movie.title }} <span
-                                class="text-gray-400 text-3xl font-normal">({{ movie.release_date|slice:":4" }})</span>
-                        </h1>
-                        <div class="flex items-center gap-4 text-gray-300 text-sm">
-                            <span class="border border-gray-600 px-2 py-0.5 rounded">PG-13</span>
-                            <span>{{ movie.runtime }} min</span>
-                            <span>
-                                {% for genre in movie.genres %}
-                                {{ genre.name }}{% if not forloop.last %}, {% endif %}
-                                {% endfor %}
-                            </span>
-                        </div>
+                    {% else %}
+                    <a href="{% url 'accounts:login' %}?next={{ request.path }}"
+                        class="w-full bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-lg font-bold transition-colors flex items-center justify-center gap-2">
+                        <i data-lucide="log-in" class="w-5 h-5"></i> Login to Watchlist
+                    </a>
+                    {% endif %}
+
+                    <button onclick="openTrailer('{{ movie.videos.results.0.key }}')"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-bold transition-colors flex items-center justify-center gap-2">
+                        <i data-lucide="play" class="w-5 h-5"></i> Play Trailer
+                    </button>
+                </div>
+            </div>
+
+            <!-- Details -->
+            <div class="flex-grow space-y-6">
+                <div>
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">{{ movie.title }} <span
+                            class="text-gray-400 text-3xl font-normal">({{ movie.release_date|slice:":4" }})</span>
+                    </h1>
+                    <div class="flex items-center gap-4 text-gray-300 text-sm">
+                        <span class="border border-gray-600 px-2 py-0.5 rounded">PG-13</span>
+                        <span>{{ movie.runtime }} min</span>
+                        <span>
+                            {% for genre in movie.genres %}
+                            {{ genre.name }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </span>
                     </div>
+                </div>
 
-                    <div class="flex items-center gap-6">
-                        <div class="flex items-center gap-2">
+                <p class="text-gray-300 text-lg leading-relaxed">{{ movie.overview }}</p>
 
-                            <!-- Cast -->
-                            <div>
-                                <h3 class="text-xl font-semibold text-white mb-4">Top Cast</h3>
-                                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                                    {% for cast in movie.credits.cast|slice:":6" %}
-                                    <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md">
-                                        {% if cast.profile_path %}
-                                        <img src="https://image.tmdb.org/t/p/w185{{ cast.profile_path }}"
-                                            alt="{{ cast.name }}" class="w-full h-40 object-cover object-top">
-                                        {% else %}
-                                        <div
-                                            class="w-full h-40 bg-gray-700 flex items-center justify-center text-gray-500 text-xs">
-                                            No Image</div>
-                                        {% endif %}
-                                        <div class="p-3">
-                                            <p class="font-bold text-sm text-white truncate">{{ cast.name }}</p>
-                                            <p class="text-xs text-gray-400 truncate">{{ cast.character }}</p>
-                                        </div>
-                                    </div>
-                                    {% endfor %}
-                                </div>
+                <!-- Cast -->
+                <div>
+                    <h3 class="text-xl font-semibold text-white mb-4">Top Cast</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                        {% for cast in movie.credits.cast|slice:":6" %}
+                        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md">
+                            {% if cast.profile_path %}
+                            <img src="https://image.tmdb.org/t/p/w185{{ cast.profile_path }}" alt="{{ cast.name }}"
+                                class="w-full h-40 object-cover object-top">
+                            {% else %}
+                            <div class="w-full h-40 bg-gray-700 flex items-center justify-center text-gray-500 text-xs">
+                                No Image</div>
+                            {% endif %}
+                            <div class="p-3">
+                                <p class="font-bold text-sm text-white truncate">{{ cast.name }}</p>
+                                <p class="text-xs text-gray-400 truncate">{{ cast.character }}</p>
                             </div>
                         </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
-            {% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}
 
-            {% block extra_body %}
-            <!-- Trailer Modal -->
-            <div id="trailerModal"
-                class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/90 backdrop-blur-sm opacity-0 transition-opacity duration-300">
-                <div class="relative w-full max-w-5xl aspect-video bg-black rounded-xl overflow-hidden shadow-2xl transform scale-95 transition-transform duration-300"
-                    id="modalContent">
-                    <button onclick="closeTrailer()"
-                        class="absolute top-4 right-4 text-white/70 hover:text-white z-10 bg-black/50 rounded-full p-2 transition-colors">
-                        <i data-lucide="x" class="w-6 h-6"></i>
-                    </button>
-                    <div id="videoContainer" class="w-full h-full">
-                        modal.classList.remove('hidden');
-                        // Trigger reflow
-                        void modal.offsetWidth;
-                        modal.classList.remove('opacity-0');
-                        modalContent.classList.remove('scale-95');
-                        modalContent.classList.add('scale-100');
-                        }
+{% block extra_body %}
+<!-- Trailer Modal -->
+<div id="trailerModal"
+    class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/90 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+    <div class="relative w-full max-w-5xl aspect-video bg-black rounded-xl overflow-hidden shadow-2xl transform scale-95 transition-transform duration-300"
+        id="modalContent">
+        <button onclick="closeTrailer()"
+            class="absolute top-4 right-4 text-white/70 hover:text-white z-10 bg-black/50 rounded-full p-2 transition-colors">
+            <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+        <div id="videoContainer" class="w-full h-full"></div>
+    </div>
+</div>
 
-                        function closeTrailer() {
-                        const modal = document.getElementById('trailerModal');
-                        const container = document.getElementById('videoContainer');
-                        const modalContent = document.getElementById('modalContent');
+<script>
+    function openTrailer(videoKey) {
+        if (!videoKey) return;
 
-                        modal.classList.add('opacity-0');
-                        modalContent.classList.remove('scale-100');
-                        modalContent.classList.add('scale-95');
+        const modal = document.getElementById('trailerModal');
+        const container = document.getElementById('videoContainer');
+        const modalContent = document.getElementById('modalContent');
 
-                        setTimeout(() => {
-                        modal.classList.add('hidden');
-                        container.innerHTML = '';
-                        }, 300);
-                        }
+        container.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${videoKey}?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
 
-                        // Close on background click
-                        document.getElementById('trailerModal').addEventListener('click', (e) => {
-                        if (e.target === document.getElementById('trailerModal')) {
-                        closeTrailer();
-                        }
-                        });
+        modal.classList.remove('hidden');
+        // Trigger reflow
+        void modal.offsetWidth;
+        modal.classList.remove('opacity-0');
+        modalContent.classList.remove('scale-95');
+        modalContent.classList.add('scale-100');
+    }
 
-                        // Close on Escape key
-                        document.addEventListener('keydown', (e) => {
-                        if (e.key === 'Escape' && !document.getElementById('trailerModal').classList.contains('hidden'))
-                        {
-                        closeTrailer();
-                        }
-                        });
-                        </script>
-                        {% endblock %}
+    function closeTrailer() {
+        const modal = document.getElementById('trailerModal');
+        const container = document.getElementById('videoContainer');
+        const modalContent = document.getElementById('modalContent');
+
+        modal.classList.add('opacity-0');
+        modalContent.classList.remove('scale-100');
+        modalContent.classList.add('scale-95');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            container.innerHTML = '';
+        }, 300);
+    }
+
+    // Close on background click
+    document.getElementById('trailerModal').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('trailerModal')) {
+            closeTrailer();
+        }
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !document.getElementById('trailerModal').classList.contains('hidden')) {
+            closeTrailer();
+        }
+    });
+</script>
+{% endblock %}
