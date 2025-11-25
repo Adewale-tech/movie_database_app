@@ -83,45 +83,4 @@ class RateMovieView(LoginRequiredMixin, View):
             pass
         return redirect('core:movie_detail', movie_id=movie_id)
 
-class DebugDBView(View):
-    def get(self, request):
-        import os
-        import dj_database_url
-        import psycopg2
-        from django.http import HttpResponse
 
-        output = ["<h1>Database Diagnostic</h1>"]
-        
-        # 1. Check Environment Variable
-        db_url = os.getenv('DATABASE_URL')
-        if not db_url:
-            output.append("<p style='color:red'>❌ DATABASE_URL is NOT set in environment variables.</p>")
-        else:
-            output.append("<p style='color:green'>✅ DATABASE_URL is set.</p>")
-            safe_url = db_url.split('@')[-1] if '@' in db_url else '***'
-            output.append(f"<p>Value (masked): ...{safe_url}</p>")
-
-            # 2. Check Parsing
-            try:
-                config = dj_database_url.parse(db_url, conn_max_age=600, ssl_require=True)
-                output.append("<p style='color:green'>✅ dj_database_url parsed the URL successfully.</p>")
-                output.append(f"<ul><li>Engine: {config.get('ENGINE')}</li><li>Name: {config.get('NAME')}</li><li>Host: {config.get('HOST')}</li></ul>")
-                
-                # 3. Check Connection
-                try:
-                    conn = psycopg2.connect(
-                        dbname=config['NAME'],
-                        user=config['USER'],
-                        password=config['PASSWORD'],
-                        host=config['HOST'],
-                        port=config['PORT'],
-                        sslmode='require'
-                    )
-                    output.append("<p style='color:green'>✅ Successfully connected to PostgreSQL!</p>")
-                    conn.close()
-                except Exception as e:
-                    output.append(f"<p style='color:red'>❌ Failed to connect to PostgreSQL: {e}</p>")
-            except Exception as e:
-                output.append(f"<p style='color:red'>❌ dj_database_url failed to parse URL: {e}</p>")
-
-        return HttpResponse("".join(output))
