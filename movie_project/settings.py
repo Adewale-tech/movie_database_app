@@ -139,3 +139,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+# Strict check for production database
+if not DEBUG and 'sqlite' in DATABASES['default']['ENGINE']:
+    raise RuntimeError(
+        "CRITICAL ERROR: The application is running in production (DEBUG=False) but is configured to use SQLite. "
+        "This means the DATABASE_URL environment variable is missing or incorrect on Heroku. "
+        "Please set DATABASE_URL in Heroku Config Vars."
+    )
